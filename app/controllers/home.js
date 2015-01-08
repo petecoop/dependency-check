@@ -1,19 +1,35 @@
 var express = require('express'),
   router = express.Router(),
   mongoose = require('mongoose'),
-  Article = mongoose.model('Article');
+  check = require('npm-check-latest');
 
 module.exports = function (app) {
   app.use('/', router);
 };
 
+
 router.get('/', function (req, res, next) {
 
-  Article.find(function (err, articles) {
-    if (err) return next(err);
-    res.render('index', {
-      title: 'Generator-Express MVC',
-      articles: articles
+  var dependencies = {
+    express: '~4.10.6'
+  };
+
+  check(dependencies)
+    .then(function (updates) {
+      res.json(updates);
+    })
+    .catch(function (e) {
+      res.json(e);
     });
-  });
+
+});
+
+router.get('/check', function (req, res) {
+
+  // checkout file using git archive
+
+  // test for version
+
+  // display results
+
 });

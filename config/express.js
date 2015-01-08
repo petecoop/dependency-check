@@ -7,11 +7,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var compress = require('compression');
 var methodOverride = require('method-override');
-
 var exphbs  = require('express-handlebars');
 
 module.exports = function(app, config) {
-  
   app.engine('handlebars', exphbs({
     layoutsDir: config.root + '/app/views/layouts/',
     defaultLayout: 'main',
