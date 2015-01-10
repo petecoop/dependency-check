@@ -11,7 +11,7 @@ module.exports = function (app) {
 router.get('/', function (req, res, next) {
 
   var dependencies = {
-    express: '~4.10.6'
+    express: '~4.9.6'
   };
 
   check(dependencies)
@@ -22,13 +22,17 @@ router.get('/', function (req, res, next) {
       res.json(e);
     });
 
+  res.render('index');
+
 });
 
 router.get('/check', function (req, res) {
 
   // checkout file using git archive
 
+
   // test for version
+  
 
   // display results
 

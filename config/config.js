@@ -8,19 +8,7 @@ var config = {
     app: {
       name: 'package-updates'
     },
-    port: 3000,
-    db: 'mongodb://localhost/package-updates-development'
-    
-  },
-
-  test: {
-    root: rootPath,
-    app: {
-      name: 'package-updates'
-    },
-    port: 3000,
-    db: 'mongodb://localhost/package-updates-test'
-    
+    port: 3000
   },
 
   production: {
@@ -28,9 +16,7 @@ var config = {
     app: {
       name: 'package-updates'
     },
-    port: 3000,
-    db: 'mongodb://localhost/package-updates-production'
-    
+    port: 3000
   }
 };
 
