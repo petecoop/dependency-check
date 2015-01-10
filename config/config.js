@@ -17,7 +17,7 @@ var config = {
     app: {
       name: 'package-updates'
     },
-    port: 3000,
+    port: process.env.PORT,
     repo_path: rootPath + '/repos'
   }
 };
