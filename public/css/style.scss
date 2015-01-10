@@ -1,8 +1,20 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
+// $body-bg: #f1f1f1;
+$body-font-color: #1e1e1e;
+// $body-font-family: 'Ubuntu', "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$border-color: #d7d7d7;
+$purple: #6111ab;
 
-a {
-  color: #00B7FF;
+// foundation
+@import "../components/foundation/scss/normalize";
+
+$row-width: 800px;
+@import "../components/foundation/scss/foundation/components/global";
+@import "../components/foundation/scss/foundation/components/grid";
+@import "../components/foundation/scss/foundation/components/forms";
+
+$paragraph-font-size: 0.9rem;
+@import "../components/foundation/scss/foundation/components/type";
+
+body {
+  margin-top: 50px;
 }

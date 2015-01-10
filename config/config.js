@@ -8,7 +8,8 @@ var config = {
     app: {
       name: 'package-updates'
     },
-    port: 3000
+    port: 3000,
+    repo_path: rootPath + '/repos'
   },
 
   production: {
@@ -16,7 +17,8 @@ var config = {
     app: {
       name: 'package-updates'
     },
-    port: 3000
+    port: 3000,
+    repo_path: rootPath + '/repos'
   }
 };
 

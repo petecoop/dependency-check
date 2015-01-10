@@ -1,20 +1,32 @@
 
 <div class="row">
   <div class="small-12 columns">
-  
+
     <h1>Node Dependency Check</h1>
     <p>Check your project against the latest npm modules</p>
-    <p>Checks dependencies in <code>package.json</code>, alternatively you can add a <code>.dependencies.json</code> file following the same format as package.json's dependencies section</p>
+    
+    <p>{{ packages.length }} updates available for {{ repo }}{{#if dev}} including dev dependencies{{/if}}</p>
+
+    <ul>
+      {{#each packages}}
+        <li>
+          <a href="https://www.npmjs.org/package/{{ name }}">{{ name }}</a><br>
+          Installed: {{ current }} Latest: {{ latest }}
+        </li>
+      {{/each}}
+    </ul>
+
+    <h2>Check again...</h2>
 
     <form action="/check" method="GET">
       <div class="row inline">
         <div class="small-12 columns">
           <label for="git">git repo clone URL:</label>
-          <input type="text" name="git-repo" id="git" placeholder="e.g https://github.com/petecoop/npm-check-latest.git">
+          <input type="text" name="git-repo" id="git" placeholder="e.g https://github.com/petecoop/npm-check-latest.git" value="{{ repo }}">
         </div>
         
         <div class="small-12 columns">
-          <input type="checkbox" name="dev" id="dev" value="1">
+          <input type="checkbox" name="dev" id="dev" value="1" {{#if dev}}checked{{/if}}>
           <label for="dev">Check Dev Dependencies</label>
         </div>
         
@@ -23,6 +35,7 @@
         </div>
       </div>
     </form>
+    
 
   </div>
 </div>
