@@ -1,5 +1,6 @@
 var express = require('express');
 var glob = require('glob');
+var config = require('./config');
 
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -8,6 +9,10 @@ var bodyParser = require('body-parser');
 var compress = require('compression');
 var methodOverride = require('method-override');
 var exphbs  = require('express-handlebars');
+var session = require('express-session');
+
+var passport = require('passport');
+require('./passport')(passport);
 
 module.exports = function(app, config) {
   app.engine('handlebars', exphbs({
@@ -28,6 +33,13 @@ module.exports = function(app, config) {
   app.use(compress());
   app.use(express.static(config.root + '/public'));
   app.use(methodOverride());
+  app.use(session({
+    secret: config.session_secret,
+    resave: true,
+    saveUninitialized: true
+  }));
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   var controllers = glob.sync(config.root + '/app/controllers/*.js');
   controllers.forEach(function (controller) {
