@@ -18,11 +18,12 @@ module.exports = function (passport) {
     scope: ['repo']
   }, function (accessToken, refreshToken, profile, done) {
 
-    // To keep the example simple, the user's GitHub profile is returned to
-    // represent the logged-in user.  In a typical application, you would want
-    // to associate the GitHub account with a user record in your database,
-    // and return that user instead.
-    return done(null, profile);
+    return done(null, {
+      type: 'github',
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      profile: profile
+    });
 
   }));
 

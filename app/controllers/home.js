@@ -6,7 +6,8 @@ var express = require('express'),
   fs = require('fs'),
   path = require('path'),
   rm = require('rimraf'),
-  config = require('../../config/config');
+  config = require('../../config/config'),
+  github = require('../lib/github');
 
 module.exports = function (app) {
   app.use('/', router);
@@ -22,9 +23,17 @@ var errors = {
 
 router.get('/', function (req, res, next) {
 
-  res.render('index', {
-    title: 'Node Dependency Check'
-  });
+  if(req.isAuthenticated()){
+    github.list(req.user.access_token)
+      .then(function (repos) {
+        res.json(repos);
+      });
+  }else{
+    res.render('index', {
+      title: 'Node Dependency Check'
+    });
+  }
+
 
 });
 
