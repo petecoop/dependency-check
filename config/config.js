@@ -6,7 +6,7 @@ var config = {
   development: {
     root: rootPath,
     app: {
-      name: 'package-updates',
+      name: 'Node Dependency Check ',
       host: 'http://localhost:3000'
     },
     port: 3000,
@@ -21,7 +21,7 @@ var config = {
   production: {
     root: rootPath,
     app: {
-      name: 'package-updates',
+      name: 'Node Dependency Check',
       host: 'http://ndc.petecoop.co.uk'
     },
     port: process.env.PORT,

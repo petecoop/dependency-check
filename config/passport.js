@@ -14,9 +14,9 @@ module.exports = function (passport) {
   passport.use(new GitHubStrategy({
     clientID: config.github.client_id,
     clientSecret: config.github.client_secret,
-    callbackURL: config.app.host + '/auth/github/callback'  
-  }),
-  function (accessToken, refreshToken, profile, done) {
+    userAgent: config.app.name,
+    scope: ['repo']
+  }, function (accessToken, refreshToken, profile, done) {
 
     // To keep the example simple, the user's GitHub profile is returned to
     // represent the logged-in user.  In a typical application, you would want
@@ -24,6 +24,6 @@ module.exports = function (passport) {
     // and return that user instead.
     return done(null, profile);
 
-  });
+  }));
 
 };
