@@ -36,6 +36,26 @@ exports.content = function (repo, file, token) {
 
 };
 
+exports.createIssue = function (repo, title, body, token) {
+
+  return request({
+    url: endpoint + '/repos/' + repo + '/issues',
+    qs: {
+      access_token: token
+    },
+    headers: {
+      'User-Agent': 'Node Dependency Check'
+    },
+    method: 'POST',
+    json: true,
+    body: {
+      title: title,
+      body: body
+    }
+  });
+
+};
+
 exports.getDependencies = function (repo, dev, user) {
 
   return Promise.settle([

@@ -14,8 +14,14 @@ var errors = {
   repofail: 'Failed to fetch repository',
   fileserr: 'Failed to read files',
   depserr: 'Failed to check dependencies',
-  nodeps: 'No dependencies found'
+  nodeps: 'No dependencies found',
+  gherr: 'Error listing github repos'
 };
+
+function resError(res, err, json) {
+  var message = errors[err];
+  return json ? res.json({message: message}, 400) : res.redirect('/?msg=' + err);
+}
 
 router.get('/', function (req, res, next) {
 
@@ -36,6 +42,7 @@ router.get('/', function (req, res, next) {
       })
       .catch(function (e) {
         console.log(e);
+        return resError(res, 'gherr', false);
       });
   }else{
     res.render('index', {
@@ -46,11 +53,6 @@ router.get('/', function (req, res, next) {
 
 
 });
-
-function resError(res, err, json) {
-  var message = errors[err];
-  return json ? res.json({message: message}, 400) : res.redirect('/?msg=' + err);
-}
 
 router.get('/check', function (req, res) {
 
@@ -82,12 +84,33 @@ router.get('/check', function (req, res) {
           isJson ? res.json(updates) : res.render('check', {
             packages: updates,
             repo: url || service_repo,
-            dev: dev
+            dev: dev,
+            user: req.user
           });
         });
     }).catch(function (e) {
-      console.log(e);
-      return resError(res, 'depserr', isJson);
+      return resError(res, e || 'depserr', isJson);
     });
+
+});
+
+router.post('/issue', function (req, res) {
+
+  var title = req.param('title');
+  var body = req.param('body');
+  var repo = req.param('repo');
+
+  if(!title || !body || !repo || !req.isAuthenticated()) return res.render('issue', {message: 'Failed to create issue'});
+
+  if(req.user.type == 'github'){
+    github.createIssue(repo, title, body, req.user.accessToken)
+      .then(function (issue) {
+        res.render('issue', {
+          issue: issue
+        });
+      }).catch(function (e) {
+        res.render('issue', {message: 'Failed to create issue'});
+      });
+  }
 
 });

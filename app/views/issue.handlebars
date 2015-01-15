@@ -1,0 +1,17 @@
+
+<div class="row">
+  <div class="small-12 columns">
+  
+    <h1>Node Dependency Check</h1>
+    <p>Check your project against the latest npm modules</p>
+    
+    {{#if message}}
+      <div class="alert-box alert">{{message}}</div>
+    {{/if}}
+
+    {{#if issue}}
+      <p>issue created, <a href="{{issue.html_url}}">view issue</a></p>
+    {{/if}}
+
+  </div>
+</div>

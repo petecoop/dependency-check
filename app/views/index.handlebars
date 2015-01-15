@@ -6,6 +6,10 @@
     <p>Check your project against the latest npm modules</p>
     <p>Checks dependencies in <code>package.json</code>, alternatively you can add a <code>.dependencies.json</code> file following the same format as package.json's dependencies section</p>
     
+    {{#if message}}
+      <div class="alert-box alert">{{message}}</div>
+    {{/if}}
+    
     <form action="/check" method="GET">
       
       <h4>Select from:</h4>
