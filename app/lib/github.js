@@ -38,11 +38,32 @@ exports.content = function (repo, file, token) {
 
 exports.getDependencies = function (repo, dev, user) {
 
-  return Promise.all([
-    this.content(repo, 'package.json', user.accessToken),
+  return Promise.settle([
+    this.content(repo, 'package.json', user.accessToken)
+      .then(function (pkg) {
+        var dependencies = {};
+        if(pkg.dependencies){
+          dependencies = pkg.dependencies;
+        }
+        if(dev && pkg.devDependencies){
+          for(var d in pkg.devDependencies){
+            dependencies[d] = pkg.devDependencies[d];
+          }
+        }
+        return dependencies;
+      }),
     this.content(repo, '.dependencies.json', user.accessToken)
-  ]).finally(function (data) {
-    console.log(data);
+  ]).then(function (results) {
+    var dependencies = {};
+    results.forEach(function (r) {
+      if(r.isFulfilled()){
+        var values = r.value();
+        for(var v in values){
+          dependencies[v] = values[v];
+        }
+      }
+    });
+    return dependencies;
   });
 
 };
