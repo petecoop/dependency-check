@@ -18,6 +18,25 @@ $paragraph-font-size: 0.9rem;
 @import "../components/foundation/scss/foundation/components/buttons";
 @import "../components/foundation/scss/foundation/components/alert-boxes";
 
+// font-awesome
+$fa-font-path: "../components/font-awesome/fonts";
+@import "../components/font-awesome/scss/font-awesome";
+
 body {
   margin-top: 50px;
+}
+
+.ghbutton {
+  
+  padding: 6px 20px;
+
+  i {
+    font-size: 40px;
+  }
+
+  span {
+    display: inline-block;
+    vertical-align: super;
+    margin-left: 8px;
+  }
 }
