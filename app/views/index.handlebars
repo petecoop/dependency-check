@@ -5,10 +5,23 @@
     <h1>Node Dependency Check</h1>
     <p>Check your project against the latest npm modules</p>
     <p>Checks dependencies in <code>package.json</code>, alternatively you can add a <code>.dependencies.json</code> file following the same format as package.json's dependencies section</p>
-
-    <a href="/auth/github">Github Sign in</a>
-
+    
     <form action="/check" method="GET">
+      
+      <h4>Select from:</h4>
+
+      {{#if repos.length}}
+        <select name="repo">
+          {{#each repos}}
+            <option value="{{full_name}}">{{full_name}}</option>
+          {{/each}}
+        </select>
+      {{else}}
+        <a href="/auth/github" class="secondary button">Github</a>
+      {{/if}}
+      
+      <h4 class="text-center">OR</h4>
+
       <div class="row inline">
         <div class="small-12 columns">
           <label for="git">git repo clone URL:</label>

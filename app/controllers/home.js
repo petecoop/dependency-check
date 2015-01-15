@@ -1,12 +1,8 @@
 var express = require('express'),
   router = express.Router(),
   check = require('npm-check-latest'),
-  git = require('gift'),
-  md5 = require('md5'),
-  fs = require('fs'),
-  path = require('path'),
-  rm = require('rimraf'),
   config = require('../../config/config'),
+  git = require('../lib/git'),
   github = require('../lib/github');
 
 module.exports = function (app) {
@@ -23,14 +19,28 @@ var errors = {
 
 router.get('/', function (req, res, next) {
 
+  var message = '';
+  if(req.param('msg')){
+    message = errors[req.param('msg')];
+  }
+
   if(req.isAuthenticated()){
-    github.list(req.user.access_token)
+    github.list(req.user.accessToken)
       .then(function (repos) {
-        res.json(repos);
+        // res.json(repos);
+        res.render('index', {
+          title: 'Node Dependency Check',
+          message: message,
+          repos: repos
+        });
+      })
+      .catch(function (e) {
+        console.log(e);
       });
   }else{
     res.render('index', {
-      title: 'Node Dependency Check'
+      title: 'Node Dependency Check',
+      message: message
     });
   }
 
@@ -46,62 +56,43 @@ router.get('/check', function (req, res) {
 
   var url = req.param('git-repo');
   var dev = req.param('dev');
+  var service_repo = req.param('repo');
   var format = req.param('format'); // allow format to be set e.g. format=json
   var isJson = format == 'json';
   
-  if(!url) return resError(res, 'norepo', isJson);
+  if(!url && !service_repo) return resError(res, 'norepo', isJson);
 
-  // clone git repo
-  var repo_path = config.repo_path + '/' + md5.digest_s(url);
-  git.clone(url, repo_path, function (err, repo) {
-    if(err) return resError(res, 'repofail', isJson);
-    
-    fs.readdir(repo.path, function (err, files) {
-      if(err) return resError(res, 'fileserr', isJson);
+  var getDependencies;
 
-      // get dependencies
-      var dependencies = {};
-      if(files.indexOf('package.json') !== -1){
-        var pkg = require(repo_path + '/package.json');
-        if(pkg.dependencies){
-          dependencies = pkg.dependencies;
-        }
-        if(dev && pkg.devDependencies){
-          for(var d in pkg.devDependencies){
-            dependencies[d] = pkg.devDependencies[d];
-          }
-        }
-      }
-      if(files.indexOf('.dependencies.json') !== -1){
-        var dotDependencies = require(repo_path + '/.dependencies.json');
-        for(var d in dotDependencies){
-          dependencies[d] = dotDependencies[d];
-        }
-      }
-
-      if(!Object.keys(dependencies).length){
-        return resError(res, 'nodeps', isJson);
-      }
-
-      check(dependencies)
-        .then(function (updates) {
-          isJson ? res.json(updates) : res.render('check', {
-            packages: updates,
-            repo: url,
-            dev: dev
-          });
-        })
-        .catch(function (e) {
-          console.log('check deps error', e);
-          return resError(res, 'depserr', isJson);
-        });
-
-      // once done delete the repo
-      rm(repo_path, function (err) {
-        if(err) console.log(err);
+  if(service_repo && req.user.type == 'github'){
+    getDependencies = github.getDependencies(service_repo, dev, req.user)
+      .then(function (data) {
+        res.json(data);
+      }).catch(function (e) {
+        console.log(e);
       });
-    });
+  }else{
+    getDependencies = git.getDependencies(url, dev);
+  }
 
-  });
+  // getDependencies
+  //   .then(function (dependencies) {
+  //     if(!Object.keys(dependencies).length){
+  //       return resError(res, 'nodeps', isJson);
+  //     }
+  //     return dependencies;
+  //   }).then(function (dependencies) {
+  //     return check(dependencies)
+  //       .then(function (updates) {
+  //         isJson ? res.json(updates) : res.render('check', {
+  //           packages: updates,
+  //           repo: url,
+  //           dev: dev
+  //         });
+  //       });
+  //   }).catch(function (e) {
+  //     console.log(e);
+  //     return resError(res, 'depserr', isJson);
+  //   });
 
 });
