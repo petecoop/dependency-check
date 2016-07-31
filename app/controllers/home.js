@@ -3,7 +3,8 @@ var express = require('express'),
   check = require('npm-check-latest'),
   config = require('../../config/config'),
   git = require('../lib/git'),
-  github = require('../lib/github');
+  github = require('../lib/github'),
+  util = require('../lib/util');
 
 module.exports = function (app) {
   app.use('/', router);
@@ -54,21 +55,23 @@ router.get('/', function (req, res, next) {
 
 });
 
-router.get('/check', function (req, res) {
+router.post('/check', function (req, res) {
 
   var url = req.param('git-repo');
   var dev = req.param('dev');
   var service_repo = req.param('repo');
+  var pasted = req.param('pasted');
   var format = req.param('format'); // allow format to be set e.g. format=json
   var isJson = format == 'json';
   
-  if((!url && !service_repo) || (service_repo && !req.isAuthenticated())) return resError(res, 'norepo', isJson);
+  if ((!url && !service_repo && !pasted) || (service_repo && !req.isAuthenticated())) return resError(res, 'norepo', isJson);
 
   var getDependencies;
-
-  if(service_repo && req.isAuthenticated() && req.user.type == 'github'){
+  if (pasted) {
+    getDependencies = util.jsonDependencies(pasted, dev);
+  } else if (service_repo && req.isAuthenticated() && req.user.type == 'github') {
     getDependencies = github.getDependencies(service_repo, dev, req.user)
-  }else{
+  } else {
     getDependencies = git.getDependencies(url, dev);
   }
 
@@ -84,6 +87,7 @@ router.get('/check', function (req, res) {
           isJson ? res.json(updates) : res.render('check', {
             packages: updates,
             repo: url || service_repo,
+            pasted: pasted,
             dev: dev,
             user: req.user
           });
